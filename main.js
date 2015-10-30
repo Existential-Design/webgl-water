@@ -82,9 +82,9 @@ window.onload = function() {
   gravity = new GL.Vector(0, -4, 0);
   radius = 0.25;
 
-  for (var i = 0; i < 20; i++) {
-    water.addDrop(Math.random() * 2 - 1, Math.random() * 2 - 1, 0.03, (i & 1) ? 0.01 : -0.01);
-  }
+  // for (var i = 0; i < 20; i++) {
+  //   water.addDrop(Math.random() * 2 - 1, Math.random() * 2 - 1, 0.03, (i & 1) ? 0.01 : -0.01);
+  // }
 
   document.getElementById('loading').innerHTML = '';
   onresize();
@@ -142,10 +142,10 @@ window.onload = function() {
         var tracer = new GL.Raytracer();
         var ray = tracer.getRayForPixel(x * ratio, y * ratio);
         var pointOnPlane = tracer.eye.add(ray.multiply(-tracer.eye.y / ray.y));
-        water.addDrop(pointOnPlane.x, pointOnPlane.z, 0.03, 0.01);
+        water.addDrop(pointOnPlane.x, pointOnPlane.z, 0.30, 0.20);
         if (paused) {
           water.updateNormals();
-          renderer.updateCaustics(water);
+          // renderer.updateCaustics(water);
         }
         break;
       }
@@ -231,36 +231,23 @@ window.onload = function() {
     if (mode == MODE_MOVE_SPHERE) {
       // Start from rest when the player releases the mouse after moving the sphere
       velocity = new GL.Vector();
-    } else if (useSpherePhysics) {
-      // Fall down with viscosity under water
-      var percentUnderWater = Math.max(0, Math.min(1, (radius - center.y) / (2 * radius)));
-      velocity = velocity.add(gravity.multiply(seconds - 1.1 * seconds * percentUnderWater));
-      velocity = velocity.subtract(velocity.unit().multiply(percentUnderWater * seconds * velocity.dot(velocity)));
-      center = center.add(velocity.multiply(seconds));
-
-      // Bounce off the bottom
-      if (center.y < radius - 1) {
-        center.y = radius - 1;
-        velocity.y = Math.abs(velocity.y) * 0.7;
-      }
     }
 
     // Displace water around the sphere
-    water.moveSphere(oldCenter, center, radius);
+    // water.moveSphere(oldCenter, center, radius);
     oldCenter = center;
 
     // Update the water simulation and graphics
-    water.stepSimulation();
-    water.stepSimulation();
+    // water.stepSimulation();
+    // water.stepSimulation();
     water.updateNormals();
-    renderer.updateCaustics(water);
+    // renderer.updateCaustics(water);
   }
 
   function draw() {
     // Change the light direction to the camera look vector when the L key is pressed
     if (GL.keys.L) {
       renderer.lightDir = GL.Vector.fromAngles((90 - angleY) * Math.PI / 180, -angleX * Math.PI / 180);
-      if (paused) renderer.updateCaustics(water);
     }
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -273,9 +260,9 @@ window.onload = function() {
     gl.enable(gl.DEPTH_TEST);
     renderer.sphereCenter = center;
     renderer.sphereRadius = radius;
-    renderer.renderCube();
+    // renderer.renderCube();
     renderer.renderWater(water, cubemap);
-    renderer.renderSphere();
+    // renderer.renderSphere();
     gl.disable(gl.DEPTH_TEST);
   }
 };
